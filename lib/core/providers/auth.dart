@@ -1,40 +1,39 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_starter/core/services/auth_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ApplicationAuth extends ChangeNotifier {
-  bool _signedIn = false;
+import '../services/auth_service.dart';
 
+final authProvider = NotifierProvider<AuthNotifier, bool>(AuthNotifier.new);
+
+final routerRefreshProvider = Provider<RouterRefreshNotifier>((ref) {
+  return RouterRefreshNotifier(ref);
+});
+class AuthNotifier extends Notifier<bool> {
   @override
-  int get hashCode => _signedIn.hashCode;
-
-  bool get signedIn => _signedIn;
-
-  @override
-  bool operator ==(Object other) =>
-      other is ApplicationAuth && other._signedIn == _signedIn;
+  bool build() {
+    return false;
+  }
 
   Future<bool> signIn(String username, String password) async {
     await AuthService.signIn(username, password);
-    _signedIn = true;
-    notifyListeners();
-    return _signedIn;
+
+    state = true;
+    return state;
   }
 
   Future<void> signOut() async {
     await AuthService.signOut();
-    _signedIn = false;
-    notifyListeners();
-  }
 
-  static ApplicationAuth of(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<ApplicationAuthScope>()!
-      .notifier!;
+    state = false;
+  }
 }
 
-class ApplicationAuthScope extends InheritedNotifier<ApplicationAuth> {
-  const ApplicationAuthScope({
-    required super.notifier,
-    required super.child,
-    super.key,
-  });
+class RouterRefreshNotifier extends ChangeNotifier {
+  final Ref ref;
+
+  RouterRefreshNotifier(this.ref) {
+    ref.listen<bool>(authProvider, (_, _) {
+      notifyListeners();
+    });
+  }
 }
