@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/link.dart';
 
 class Credentials {
   final String username;
@@ -20,13 +21,15 @@ class _SignInScreenState extends State<SignInScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Center(
       child: Card(
         child: Container(
           constraints: BoxConstraints.loose(const Size(600, 600)),
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -35,27 +38,54 @@ class _SignInScreenState extends State<SignInScreen> {
                 'Sign in',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
+              SizedBox(height: 5),
               TextField(
                 decoration: const InputDecoration(labelText: 'Username'),
                 controller: _usernameController,
               ),
+              SizedBox(height: 5),
               TextField(
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 controller: _passwordController,
               ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextButton(
-                  onPressed: () async {
-                    widget.onSignIn(
-                      Credentials(
-                        _usernameController.value.text,
-                        _passwordController.value.text,
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Link(
+                        uri: Uri.parse('/reset-password'),
+                        builder: (context, followLink) => TextButton(
+                          onPressed: followLink,
+                          child: const Text('Forgot password?'),
+                        ),
                       ),
-                    );
-                  },
-                  child: const Text('Sign in'),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                widget.onSignIn(
+                                  Credentials(
+                                    _usernameController.value.text,
+                                    _passwordController.value.text,
+                                  ),
+                                );
+                              },
+                        child: const Text('Sign in'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
