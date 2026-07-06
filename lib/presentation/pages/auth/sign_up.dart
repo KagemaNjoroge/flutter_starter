@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupCredentials {
   final String password;
@@ -116,7 +117,12 @@ class _SignUpPageState extends State<SignUpPage> {
           SizedBox(
             height: 52,
             child: FilledButton(
-              onPressed: _agreed ? () {} : null,
+              onPressed: _agreed
+                  ? () {
+                      //TODO: Implement sign up logic here
+                      context.go('/2fa');
+                    }
+                  : null,
               child: const Text('Create account'),
             ),
           ),
