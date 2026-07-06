@@ -4,6 +4,7 @@ import 'package:flutter_starter/presentation/pages/auth/sign_up.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/providers/auth.dart';
+import 'presentation/pages/auth/otp.dart';
 import 'presentation/pages/auth/reset_password.dart';
 import 'presentation/pages/auth/sign_in.dart';
 import 'presentation/pages/home.dart';
@@ -75,6 +76,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
+      GoRoute(path: '/2fa', builder: (context, state) => const OtpPage()),
 
       GoRoute(
         path: '/interstitial',
